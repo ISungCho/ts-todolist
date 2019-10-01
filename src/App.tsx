@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//https://velog.io/@yesdoing/TypeScript-with-React-Redux-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-k5jsis62ah
 
-const App: React.FC = () => {
+import React, { useState } from 'react';
+import TodoListContainer from './containers/TodoListContainer';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { lightTheme, darkTheme } from './styles/my-theme';
+import Switch from './styled-components/Switch';
+
+const GlobalStyle = createGlobalStyle`
+  body{
+    background: ${(props: any) => props.theme.colors.background};
+    color: ${(props: any) => props.theme.colors.defaultFont};
+  }
+`
+
+const App = () => {
+  const stored = localStorage.getItem("isDarkMode");
+  const [isDarkMode, setIsDarkMode] = useState(
+    stored === "true" ? true : false
+  );
+
+  const onChange = () => {
+    setIsDarkMode(!isDarkMode);
+    localStorage.setItem("isDarkMode", JSON.stringify(!isDarkMode));
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+      <>
+        <Switch checked={isDarkMode} onChange={onChange} />
+        <GlobalStyle {...isDarkMode ? darkTheme : lightTheme} />
+        <TodoListContainer />
+      </>
+    </ThemeProvider>
   );
 }
 
